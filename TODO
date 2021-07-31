@@ -1,10 +1,12 @@
 ☐ Request akses ruangan = menjelaskan setting schedule untuk yang akan akses
-    ☐ Set Tanggal	
-    ☐ Set Hari
-    ☐ Set Waktu
+    ☐ Set Tanggal, Hari, Waktu
+    ☐ Demo-Ver1.1.15\old\C#\IFace\UserInfo
+      - Disable: export template, then delete the user
+      - Enable: import template, user automatically enabled
+☐ Rekap penggunaan akses = Menjelaskan pengakses mengakses kapan (attendance)
+☐ Monitoring Real Time = siapa saja yang sedang mengakses
 ✔ Database user = nama id, data biometric yang bisa diambil deskripsinya @done(21-07-31 10:28)
     ✔ fingerprint @done(21-07-31 10:28)
     ✔ password @done(21-07-31 10:28)
-    ☐ face (jika ada deskripsinya)
-☐ Rekap penggunaan akses = Menjelaskan pengakses mengakses kapan (attendance)
-☐ Monitoring Real Time = siapa saja yang sedang mengakses
+    ✔ face (jika ada deskripsinya) @done(21-07-31 10:32)
+✔ Gather device information @done(21-07-31 10:30)
