@@ -33,12 +33,11 @@ namespace WebApiZkteco.Services
             {
                 SetMachineNumber(1); //In fact,when you are using the tcp/ip communication,this parameter will be ignored,that is any integer will all right.Here we use 1.
                 axCZKEM1.RegEvent(GetMachineNumber(), 65535);//Here you can register the realtime events that you want to be triggered(the parameters 65535 means registering all)
-                Console.WriteLine("Device connected.");
             }
             else
             {
                 axCZKEM1.GetLastError(ref idwErrorCode);
-                Console.WriteLine("Unable to connect the device,ErrorCode=" + idwErrorCode.ToString(), "Error");
+                throw new Exception("Unable to connect the device,ErrorCode=" + idwErrorCode.ToString());
             }
 
             return GetConnectState();
@@ -71,7 +70,7 @@ namespace WebApiZkteco.Services
             iMachineNumber = Number;
         }
 
-        public int sta_GetDeviceInfo(ref DeviceInfo info)
+        public int GetDeviceInfo(ref DeviceInfo info)
         {
             int iRet = 0;
 
@@ -88,8 +87,7 @@ namespace WebApiZkteco.Services
 
             if (GetConnectState() == false)
             {
-                Console.WriteLine("*Please connect first!");
-                return -1024;
+                throw new Exception("*Please connect first!");
             }
 
             axCZKEM1.EnableDevice(GetMachineNumber(), false);//disable the device
@@ -136,9 +134,54 @@ namespace WebApiZkteco.Services
 
             axCZKEM1.EnableDevice(GetMachineNumber(), true);//enable the device
 
-            Console.WriteLine("Get the device info successfully");
             iRet = 1;
             return iRet;
+        }
+
+        public void GetUserInfo(ref List<UserInfo> users)
+        {
+            string sdwEnrollNumber = "";
+            string sName = "";
+            string sPassword = "";
+            int iPrivilege = 0;
+            bool bEnabled = false;
+
+            int idwFingerIndex;
+            string sTmpData = "";
+            int iTmpLength = 0;
+            int iFlag = 0;
+
+            if (GetConnectState() == false)
+            {
+                throw new Exception("*Please connect first!");
+            }
+
+            axCZKEM1.EnableDevice(GetMachineNumber(), false);
+
+            axCZKEM1.ReadAllUserID(GetMachineNumber());//read all the user information to the memory
+            axCZKEM1.ReadAllTemplate(GetMachineNumber());//read all the users' fingerprint templates to the memory
+            while (axCZKEM1.SSR_GetAllUserInfo(GetMachineNumber(), out sdwEnrollNumber, out sName, out sPassword, out iPrivilege, out bEnabled))//get all the users' information from the memory
+            {
+                for (idwFingerIndex = 0; idwFingerIndex < 10; idwFingerIndex++)
+                {
+                    if (axCZKEM1.GetUserTmpExStr(GetMachineNumber(), sdwEnrollNumber, idwFingerIndex, out iFlag, out sTmpData, out iTmpLength))//get the corresponding templates string and length from the memory
+                    {
+                        UserInfo user = new UserInfo();
+                        user.sdwEnrollNumber = sdwEnrollNumber;
+                        user.sName = sName;
+                        user.idwFingerIndex = idwFingerIndex;
+                        user.sData = sTmpData;
+                        user.iPrivilege = iPrivilege;
+                        user.sPassword = sPassword;
+                        user.bEnabled = bEnabled;
+                        user.iFlag = iFlag;
+
+                        users.Add(user);
+                    }
+                }
+            }
+
+            axCZKEM1.EnableDevice(GetMachineNumber(), true);
         }
     }
 }

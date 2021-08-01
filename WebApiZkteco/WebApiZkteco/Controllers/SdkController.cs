@@ -18,21 +18,49 @@ namespace WebApiZkteco.Controllers
         public SdkController()
         {
             sdk = new SdkService("192.168.0.102", 4370);
-            sdk.Connect();
+            try
+            {
+                sdk.Connect();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         [HttpGet("connected")]
-        public bool Connected()
+        public ActionResult Connected()
         {
-            return sdk.GetConnectState();
+            return Ok(sdk.GetConnectState());
         }
 
-        [HttpGet("devinfo")]
+        [HttpGet("device-info")]
         public ActionResult DeviceInfo()
         {
-            DeviceInfo info = new DeviceInfo();
-            sdk.sta_GetDeviceInfo(ref info);
-            return Ok(info);
+            try
+            {
+                DeviceInfo info = new DeviceInfo();
+                sdk.GetDeviceInfo(ref info);
+                return Ok(info);
+            } catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
+        }
+
+        [HttpGet("user-info")]
+        public ActionResult UserInfo()
+        {
+            try
+            {
+                List<UserInfo> users = new List<UserInfo>();
+                sdk.GetUserInfo(ref users);
+                return Ok(users);
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
         }
 
     }
