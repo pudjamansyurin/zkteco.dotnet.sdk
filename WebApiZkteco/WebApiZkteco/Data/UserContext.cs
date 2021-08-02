@@ -11,5 +11,6 @@ namespace WebApiZkteco.Data
         }
 
         public DbSet<User> User { get; set; }
+
     }
 }

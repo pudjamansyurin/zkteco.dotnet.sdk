@@ -193,3 +193,4 @@ C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\WebApiZkteco\obj\Debug
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.dll
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.pdb
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.genruntimeconfig.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\WebApiZkteco\bin\Debug\netcoreapp3.1\users.json

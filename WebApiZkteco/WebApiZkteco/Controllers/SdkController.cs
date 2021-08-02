@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 using WebApiZkteco.Services;
 using WebApiZkteco.Models;
+using System.IO;
 
 namespace WebApiZkteco.Controllers
 {
@@ -17,7 +19,7 @@ namespace WebApiZkteco.Controllers
 
         public SdkController()
         {
-            sdk = new SdkService("192.168.0.102", 4370);
+            sdk = new SdkService("192.168.0.22", 4370);
             try
             {
                 sdk.Connect();
@@ -49,12 +51,18 @@ namespace WebApiZkteco.Controllers
         }
 
         [HttpGet("user-info")]
-        public ActionResult UserInfo()
+        public ActionResult GetUserInfo()
         {
             try
             {
                 List<UserInfo> users = new List<UserInfo>();
                 sdk.GetUserInfo(ref users);
+
+                // TODO: save to database
+                var fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
+                string jsonString = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
+                System.IO.File.WriteAllText(fileName, jsonString);
+
                 return Ok(users);
             }
             catch (Exception e)
@@ -62,6 +70,28 @@ namespace WebApiZkteco.Controllers
                 return Conflict(e.Message);
             }
         }
+
+
+        [HttpPost("user-info")]
+        public ActionResult SetUserInfo()
+        {
+            try
+            {
+                // TODO: read from database
+                var fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
+                string jsonString = System.IO.File.ReadAllText(fileName);
+                List<UserInfo> users = JsonSerializer.Deserialize<List<UserInfo>>(jsonString);
+
+                sdk.SetUserInfo(users);
+
+                return Ok(users);
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
+        }
+
 
     }
 }
