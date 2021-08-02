@@ -286,40 +286,18 @@ namespace WebApiZkteco.Services
 
             int idwErrorCode = 0;
 
-            string sUserID = "";
-            string sName = "";
-            int iPrivilege = 0;
-            string sPassword = "";
-            bool bEnabled = false;
-            int idwFingerIndex = 0;
-            string sTmpData = "";
-            int iFlag = 0;
-            int iFaceIndex = 0;
-            int iLength = 0;
-
             axCZKEM1.EnableDevice(iMachineNumber, false);
             for (int i = 0; i < users.Count; i++)
             {
                 UserInfo user = users[i];
-                sUserID = user.sUserID;
-                sName = user.sName;
-                sPassword = user.sPassword;
-                iPrivilege = user.iPrivilege;
-                bEnabled = user.bEnabled;
 
-                if (axCZKEM1.SSR_SetUserInfo(iMachineNumber, sUserID, sName, sPassword, iPrivilege, bEnabled))//upload user information to the device
+                if (axCZKEM1.SSR_SetUserInfo(iMachineNumber, user.sUserID, user.sName, user.sPassword, user.iPrivilege, user.bEnabled))//upload user information to the device
                 {
                     // upload finger
-                    idwFingerIndex = user.idwFingerIndex;
-                    sTmpData = user.sFingerData;
-                    iFlag = user.iFingerFlag;
-                    axCZKEM1.SetUserTmpExStr(iMachineNumber, sUserID, idwFingerIndex, iFlag, sTmpData);//upload templates information to the device
+                    axCZKEM1.SetUserTmpExStr(iMachineNumber, user.sUserID, user.idwFingerIndex, user.iFingerFlag, user.sFingerData);//upload templates information to the device
 
                     // upload face
-                    iFaceIndex = user.iFaceIndex;
-                    sTmpData = user.sFaceData;
-                    iLength = user.iFaceLen;
-                    axCZKEM1.SetUserFaceStr(iMachineNumber, sUserID, iFaceIndex, sTmpData, iLength);//upload face templates information to the device
+                    axCZKEM1.SetUserFaceStr(iMachineNumber, user.sUserID, user.iFaceIndex, user.sFaceData, user.iFaceLen);//upload face templates information to the device
                 }
                 else
                 {

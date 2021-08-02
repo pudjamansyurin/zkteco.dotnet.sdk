@@ -20,3 +20,15 @@ D:\WorkSpace\Repository\GIT\standalonesdkdoc\release\sdk-6.2.5.54\Demo\C#\IFace\
 D:\WorkSpace\Repository\GIT\standalonesdkdoc\release\sdk-6.2.5.54\Demo\C#\IFace\UserInfo\obj\x86\Release\UserInfo.Properties.Resources.resources
 D:\WorkSpace\Repository\GIT\standalonesdkdoc\release\sdk-6.2.5.54\Demo\C#\IFace\UserInfo\obj\x86\Release\UserInfo.csproj.GenerateResource.Cache
 D:\WorkSpace\Repository\GIT\standalonesdkdoc\release\sdk-6.2.5.54\Demo\C#\IFace\UserInfo\obj\x86\Release\UserInfo.pdb
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\bin\x86\Release\UserInfo.exe
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\bin\x86\Release\UserInfo.pdb
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\bin\x86\Release\Interop.zkemkeeper.dll
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.csproj.AssemblyReference.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\Interop.zkemkeeper.dll
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.csproj.ResolveComReference.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.UserInfoMain.resources
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.Properties.Resources.resources
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.csproj.GenerateResource.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.csproj.CoreCompileInputs.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.exe
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\Demo-Ver1.1.15\old\C#\IFace\UserInfo\obj\x86\Release\UserInfo.pdb
