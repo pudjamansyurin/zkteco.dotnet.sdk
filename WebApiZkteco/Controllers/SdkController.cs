@@ -50,18 +50,25 @@ namespace WebApiZkteco.Controllers
             }
         }
 
-        [HttpGet("user-info")]
-        public ActionResult GetUserInfo()
+        [HttpGet("user-info/{sUserID?}")]
+        public ActionResult GetUserInfo(string sUserID)
         {
             try
             {
                 List<UserInfo> users = new List<UserInfo>();
-                sdk.GetUserInfo(ref users);
+
+                if (sUserID == null)
+                {
+                    sdk.GetUsersInfo(ref users);
+                } else
+                {
+                    sdk.GetUserInfo(sUserID, ref users);
+                }
 
                 // TODO: save to database
-                string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
-                string jsonString = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
-                System.IO.File.WriteAllText(fileName, jsonString);
+                //string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
+                //string jsonString = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
+                //System.IO.File.WriteAllText(fileName, jsonString);
 
                 return Ok(users);
             }
@@ -72,19 +79,16 @@ namespace WebApiZkteco.Controllers
         }
 
 
-        [HttpPost("user-info")]
-        public ActionResult SetUserInfo()
+        [HttpPut("user-info/{sUserID}")]
+        public ActionResult SetUserInfo(string sUserID)
         {
             try
             {
-                // TODO: read from database
-                string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
-                string jsonString = System.IO.File.ReadAllText(fileName);
-                List<UserInfo> users = JsonSerializer.Deserialize<List<UserInfo>>(jsonString);
+                var user = FindUserInDB(sUserID);
 
-                sdk.SetUserInfo(users);
+                sdk.SetUserInfo(user);
 
-                return Ok(users);
+                return Ok("User " + sUserID + " uploaded");
             }
             catch (Exception e)
             {
@@ -92,6 +96,41 @@ namespace WebApiZkteco.Controllers
             }
         }
 
+
+        [HttpDelete("user-info/{sUserID}")]
+        public ActionResult DeleteUserInfo(string sUserID)
+        {
+            try
+            {
+                var user = FindUserInDB(sUserID);
+
+                sdk.DeleteUserInfo(user);
+
+                return Ok("User "+sUserID+" deleted");
+            }
+            catch (Exception e)
+            {
+                return Conflict(e.Message);
+            }
+        }
+
+        private UserInfo FindUserInDB(string sUserID)
+        {
+            // TODO: read from database
+            string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
+            string jsonString = System.IO.File.ReadAllText(fileName);
+            List<UserInfo> users = JsonSerializer.Deserialize<List<UserInfo>>(jsonString);
+
+            // Check is user exist
+            try
+            {
+                return users.Where(u => u.sUserID == sUserID).First();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("User not found: ", e);
+            }
+        } 
 
     }
 }
