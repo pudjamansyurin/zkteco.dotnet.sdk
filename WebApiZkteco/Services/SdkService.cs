@@ -129,7 +129,7 @@ namespace WebApiZkteco.Services
             return iRet;
         }
 
-        public void GetUserInfo(string sUserID, ref List<UserInfo> users)
+        public void GetUserInfo(string sUserID, ref UserInfo user)
         {
             if (GetConnectState() == false)
             {
@@ -141,7 +141,6 @@ namespace WebApiZkteco.Services
                 throw new Exception("Invalid user ID");
             }
 
-            int iUserID = int.Parse(sUserID);
             string sName = "";
             string sPassword = "";
             int iPrivilege = 0;
@@ -150,24 +149,23 @@ namespace WebApiZkteco.Services
             int idwErrorCode = 0;
 
             axCZKEM1.EnableDevice(iMachineNumber, false);
-
-            if (axCZKEM1.GetUserInfo(iMachineNumber, iUserID, ref sName, ref sPassword, ref iPrivilege, ref bEnabled)) //get user' information from the memory
+            if (axCZKEM1.SSR_GetUserInfo(iMachineNumber, sUserID, out sName, out sPassword, out iPrivilege, out bEnabled)) //get user' information from the memory
             {
-                UserInfo user = new UserInfo();
                 user.sUserID = sUserID;
                 user.sName = sName;
                 user.sPassword = sPassword;
                 user.iPrivilege = iPrivilege;
                 user.bEnabled = bEnabled;
 
-                    GetFingerAndFace(ref user);
-                    users.Add(user);
-            } else {
+                GetFinger(ref user);
+                GetFace(ref user);
+            }
+            else
+            {
                 axCZKEM1.GetLastError(ref idwErrorCode);
                 axCZKEM1.EnableDevice(iMachineNumber, true);
                 throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
             }
-
             axCZKEM1.EnableDevice(iMachineNumber, true);
         }
 
@@ -203,7 +201,8 @@ namespace WebApiZkteco.Services
 
                 if (user.sUserID != null)
                 {
-                    GetFingerAndFace(ref user);
+                    GetFinger(ref user);
+                    GetFace(ref user);
                     users.Add(user);
                 }
             }
@@ -240,17 +239,17 @@ namespace WebApiZkteco.Services
                         Console.WriteLine("Successfully upload fingerprint template");
                 }
                 // upload face
-                if (user.iFaceLen > 0 && user.sFaceData != null)
-                {
-                    if (axCZKEM1.SetUserFaceStr(iMachineNumber, user.sUserID, user.iFaceIndex, user.sFaceData, user.iFaceLen))//upload face templates information to the device
-                        Console.WriteLine("Successfully upload face template");
-                    else
-                    {
-                        axCZKEM1.GetLastError(ref idwErrorCode);
-                        axCZKEM1.EnableDevice(iMachineNumber, true);
-                        throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
-                    }
-                }
+                // if (user.iFaceLen > 0 && user.sFaceData != null)
+                // {
+                //    if (axCZKEM1.SetUserFaceStr(iMachineNumber, user.sUserID, user.iFaceIndex, user.sFaceData, user.iFaceLen))//upload face templates information to the device
+                //        Console.WriteLine("Successfully upload face template");
+                //    else
+                //    {
+                //        axCZKEM1.GetLastError(ref idwErrorCode);
+                //        axCZKEM1.EnableDevice(iMachineNumber, true);
+                //        throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
+                //    }
+                //}
             }
             else
             {
@@ -281,19 +280,23 @@ namespace WebApiZkteco.Services
             int idwErrorCode = 0;
 
 
-            if (user.iFaceIndex > 0)
-            {
-                if (axCZKEM1.DelUserFace(iMachineNumber, user.sUserID, user.iFaceIndex))
-                {
-                    axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
-                    Console.WriteLine("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FaceIndex:" + user.iFaceIndex);
-                }
-                else
-                {
-                    axCZKEM1.GetLastError(ref idwErrorCode);
-                    throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
-                }
-            }
+            //if (user.iFaceIndex > 0)
+            //{
+            //    if (axCZKEM1.DelUserFace(iMachineNumber, user.sUserID, user.iFaceIndex))
+            //    {
+            //        axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
+            //        Console.WriteLine("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FaceIndex:" + user.iFaceIndex);
+            //    }
+            //    else
+            //    {
+            //        axCZKEM1.GetLastError(ref idwErrorCode);
+            //        throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
+            //    }
+            //}
+
+            // Check if finger already deleted 
+            if (!GetFinger(ref user))
+                throw new Exception("Finger already deleted before");
 
             if (user.idwFingerIndex > 0)
             {
@@ -309,34 +312,45 @@ namespace WebApiZkteco.Services
                 }
             }
         }
-        private void GetFingerAndFace(ref UserInfo user)
+        private bool GetFace(ref UserInfo user)
+        {
+            string sTmpData = "";
+            int iTmpLength = 0;
+            int iFaceIndex = 50;//the only possible parameter value
+            bool found = false;
+
+            // get face data
+            if (axCZKEM1.GetUserFaceStr(iMachineNumber, user.sUserID, iFaceIndex, ref sTmpData, ref iTmpLength))//get the face templates from the memory
+            {
+                found = true;
+                user.iFaceIndex = iFaceIndex;
+                user.sFaceData = sTmpData;
+                user.iFaceLen = iTmpLength;
+            }
+            return found;
+        }
+
+        private bool GetFinger(ref UserInfo user)
         {
             int idwFingerIndex;
             int iFlag = 0;
             string sTmpData = "";
             int iTmpLength = 0;
-
-            int iFaceIndex = 50;//the only possible parameter value
+            bool found = false;
 
             // get finger data
             for (idwFingerIndex = 0; idwFingerIndex < 10; idwFingerIndex++)
             {
                 if (axCZKEM1.GetUserTmpExStr(iMachineNumber, user.sUserID, idwFingerIndex, out iFlag, out sTmpData, out iTmpLength))//get the corresponding templates string and length from the memory
                 {
+                    found = true;
                     user.idwFingerIndex = idwFingerIndex;
                     user.iFingerFlag = iFlag;
                     user.sFingerData = sTmpData;
                     user.iFingerLen = iTmpLength;
                 }
             }
-
-            // get face data
-            if (axCZKEM1.GetUserFaceStr(iMachineNumber, user.sUserID, iFaceIndex, ref sTmpData, ref iTmpLength))//get the face templates from the memory
-            {
-                user.iFaceIndex = iFaceIndex;
-                user.sFaceData = sTmpData;
-                user.iFaceLen = iTmpLength;
-            }
+            return found;
         }
 
         //        //Delete a certain user's face template according to its id

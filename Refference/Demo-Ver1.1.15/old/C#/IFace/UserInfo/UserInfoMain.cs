@@ -589,7 +589,14 @@ namespace UserInfo
 
                 if (axCZKEM1.SSR_SetUserInfo(iMachineNumber, sUserID, sName, sPassword, iPrivilege, bEnabled))//face templates are part of users' information
                 {
-                    axCZKEM1.SetUserFaceStr(iMachineNumber, sUserID, iFaceIndex, sTmpData, iLength);//upload face templates information to the device
+                    if (!axCZKEM1.SetUserFaceStr(iMachineNumber, sUserID, iFaceIndex, sTmpData, iLength))//upload face templates information to the device
+                    {
+                        axCZKEM1.GetLastError(ref idwErrorCode);
+                        MessageBox.Show("Operation failed,ErrorCode=" + idwErrorCode.ToString(), "Error");
+                        Cursor = Cursors.Default;
+                        axCZKEM1.EnableDevice(iMachineNumber, true);
+                        return;
+                    }
                 }
                 else
                 {

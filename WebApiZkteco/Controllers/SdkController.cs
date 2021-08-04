@@ -44,7 +44,8 @@ namespace WebApiZkteco.Controllers
                 DeviceInfo info = new DeviceInfo();
                 sdk.GetDeviceInfo(ref info);
                 return Ok(info);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return Conflict(e.Message);
             }
@@ -60,9 +61,12 @@ namespace WebApiZkteco.Controllers
                 if (sUserID == null)
                 {
                     sdk.GetUsersInfo(ref users);
-                } else
+                }
+                else
                 {
-                    sdk.GetUserInfo(sUserID, ref users);
+                    UserInfo user = new UserInfo();
+                    sdk.GetUserInfo(sUserID, ref user);
+                    users.Add(user);
                 }
 
                 // TODO: save to database
@@ -106,7 +110,7 @@ namespace WebApiZkteco.Controllers
 
                 sdk.DeleteUserInfo(user);
 
-                return Ok("User "+sUserID+" deleted");
+                return Ok("User " + sUserID + " deleted");
             }
             catch (Exception e)
             {
@@ -130,7 +134,7 @@ namespace WebApiZkteco.Controllers
             {
                 throw new Exception("User not found: ", e);
             }
-        } 
+        }
 
     }
 }
