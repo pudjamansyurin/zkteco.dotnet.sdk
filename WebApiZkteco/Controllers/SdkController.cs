@@ -15,25 +15,11 @@ namespace WebApiZkteco.Controllers
     [ApiController]
     public class SdkController : ControllerBase
     {
-        private readonly SdkService sdk;
+        private readonly ISdkService sdk;
 
-        public SdkController()
+        public SdkController(ISdkService _sdk)
         {
-            sdk = new SdkService("192.168.0.22", 4370);
-            try
-            {
-                sdk.Connect();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        [HttpGet("connected")]
-        public ActionResult Connected()
-        {
-            return Ok(sdk.GetConnectState());
+            sdk = _sdk;
         }
 
         [HttpGet("device-info")]

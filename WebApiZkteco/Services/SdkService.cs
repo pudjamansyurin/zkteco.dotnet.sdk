@@ -6,21 +6,43 @@ using WebApiZkteco.Models;
 
 namespace WebApiZkteco.Services
 {
-    public class SdkService
+    public interface ISdkService
+    {
+        bool Connect();
+        void Disconnect();
+        int GetDeviceInfo(ref DeviceInfo info);
+        void GetUserInfo(string sUserID, ref UserInfo user);
+        void GetUsersInfo(ref List<UserInfo> users);
+        void SetUserInfo(UserInfo user);
+        void DeleteUserInfo(UserInfo user);
+    }
+
+    public class SdkService : ISdkService
     {
 
-        private zkemkeeper.CZKEMClass axCZKEM1;
         private string Ip;
         private Int32 Port;
-        private bool bIsConnected = false;//the boolean value identifies whether the device is connected
-        private int iMachineNumber = 1;//the serial number of the device.After connecting the device ,this value will be changed.
+        private bool bIsConnected;//the boolean value identifies whether the device is connected
+        private int iMachineNumber;//the serial number of the device.After connecting the device ,this value will be changed.
+        private zkemkeeper.CZKEMClass axCZKEM1;
 
         public SdkService(string ip, Int32 port)
         {
             Ip = ip;
             Port = port;
-            //Create Standalone SDK class dynamicly.
-            axCZKEM1 = new zkemkeeper.CZKEMClass();
+            bIsConnected = false;
+            iMachineNumber = 1;
+            axCZKEM1 = new zkemkeeper.CZKEMClass(); //Create Standalone SDK class dynamicly.
+
+            // Connect to device
+            try
+            {
+                Connect();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public bool Connect()
@@ -39,7 +61,6 @@ namespace WebApiZkteco.Services
                 axCZKEM1.GetLastError(ref idwErrorCode);
                 throw new Exception("Unable to connect the device,ErrorCode=" + idwErrorCode.ToString());
             }
-
             return GetConnectState();
         }
 
@@ -49,17 +70,15 @@ namespace WebApiZkteco.Services
             SetConnectState(false);
         }
 
-
-        public bool GetConnectState()
+        private bool GetConnectState()
         {
             return bIsConnected;
         }
 
-        public void SetConnectState(bool state)
+        private void SetConnectState(bool state)
         {
             bIsConnected = state;
         }
-
 
         public int GetDeviceInfo(ref DeviceInfo info)
         {

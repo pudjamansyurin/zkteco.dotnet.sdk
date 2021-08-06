@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiZkteco.Data;
+using WebApiZkteco.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApiZkteco
@@ -27,9 +28,13 @@ namespace WebApiZkteco
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
+            services.AddScoped<ISdkService>(
+                x => new SdkService("192.168.0.22", 4370)
+            );
             services.AddDbContext<UserContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("UserContext"))
+                options => options.UseSqlServer(
+                    Configuration.GetConnectionString("UserContext")
+                )
             );
         }
 
