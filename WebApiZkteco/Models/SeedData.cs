@@ -10,9 +10,9 @@
 //    {
 //        public static void Initialize(IServiceProvider serviceProvider)
 //        {
-//            using (var context = new UserContext(
+//            using (var context = new ZkContext(
 //                serviceProvider.GetRequiredService<
-//                    DbContextOptions<UserContext>>()))
+//                    DbContextOptions<ZkContext>>()))
 //            {
 //                // Look for any Users.
 //                if (context.User.Any())

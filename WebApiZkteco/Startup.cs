@@ -31,9 +31,9 @@ namespace WebApiZkteco
             services.AddScoped<ISdkService>(
                 x => new SdkService("192.168.0.22", 4370)
             );
-            services.AddDbContext<UserContext>(
+            services.AddDbContext<ZkContext>(
                 options => options.UseSqlServer(
-                    Configuration.GetConnectionString("UserContext")
+                    Configuration.GetConnectionString("ZkContext")
                 )
             );
         }

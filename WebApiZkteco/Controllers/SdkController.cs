@@ -16,10 +16,12 @@ namespace WebApiZkteco.Controllers
     public class SdkController : ControllerBase
     {
         private readonly ISdkService sdk;
+        private readonly ZkContext ctx;
 
-        public SdkController(ISdkService _sdk)
+        public SdkController(ISdkService sdkService, ZkContext context)
         {
-            sdk = _sdk;
+            sdk = sdkService;
+            ctx = context;
         }
 
         [HttpGet("device")]
@@ -55,7 +57,21 @@ namespace WebApiZkteco.Controllers
                     users.Add(user);
                 }
 
-                // TODO: save to database
+                // save to database
+                users.ForEach(u =>
+                {
+                    if (ctx.Users.Any(e => e.sUserID == u.sUserID))
+                    {
+                        ctx.Users.Update(u);
+                    }
+                    else
+                    {
+                        ctx.Users.Add(u);
+                    }
+                    ctx.SaveChanges();
+                });
+
+                // save to JSON
                 //string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
                 //string jsonString = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
                 //System.IO.File.WriteAllText(fileName, jsonString);
@@ -70,15 +86,25 @@ namespace WebApiZkteco.Controllers
 
 
         [HttpPut("user/{sUserID}")]
-        public ActionResult SetUser(string sUserID)
+        public ActionResult EnableUser(string sUserID)
         {
             try
             {
-                var user = FindUserInDB(sUserID);
+                var user = FindUser(sUserID);
+
+                if (!ctx.UserPendings.Any(u => u.user == user))
+                {
+                    return Conflict("User " + user.sUserID + " already active");
+                }
 
                 sdk.SetUser(user);
 
-                return Ok("User " + sUserID + " uploaded");
+                // delete from pending user
+                var pending = ctx.UserPendings.First(u => u.user == user);
+                ctx.UserPendings.Remove(pending);
+                ctx.SaveChanges();
+
+                return Ok("User " + sUserID + " finger enabled");
             }
             catch (Exception e)
             {
@@ -88,15 +114,27 @@ namespace WebApiZkteco.Controllers
 
 
         [HttpDelete("user/{sUserID}")]
-        public ActionResult DeleteUser(string sUserID)
+        public ActionResult DisableUser(string sUserID, [FromBody] DateTime activeAt)
         {
+            // TODO: parse datetime from user request
+            return Ok(sUserID + "" + activeAt);
+
             try
             {
-                var user = FindUserInDB(sUserID);
+                var user = FindUser(sUserID); // check is user exist
+
+                if (ctx.UserPendings.Any(u => u.user == user))
+                {
+                    return Conflict("User " + user.sUserID + " already disabled");
+                }
 
                 sdk.DeleteUser(user);
 
-                return Ok("User " + sUserID + " deleted");
+                // insert to pending user
+                ctx.UserPendings.Add(new UserPending(user, activeAt));
+                ctx.SaveChanges();
+
+                return Ok("User " + sUserID + " finger disabled");
             }
             catch (Exception e)
             {
@@ -104,23 +142,23 @@ namespace WebApiZkteco.Controllers
             }
         }
 
-        private User FindUserInDB(string sUserID)
+        private User FindUser(string sUserID)
         {
-            // TODO: read from database
-            string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
-            string jsonString = System.IO.File.ReadAllText(fileName);
-            List<User> users = JsonSerializer.Deserialize<List<User>>(jsonString);
+            //// read from JSON
+            //string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
+            //string jsonString = System.IO.File.ReadAllText(fileName);
+            //List<User> users = JsonSerializer.Deserialize<List<User>>(jsonString);
 
             // Check is user exist
             try
             {
-                return users.Where(u => u.sUserID == sUserID).First();
+                //return users.Where(u => u.sUserID == sUserID).First();
+                return ctx.Users.First(u => u.sUserID == sUserID);
             }
             catch (Exception e)
             {
                 throw new Exception("User not found: ", e);
             }
         }
-
     }
 }

@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace WebApiZkteco.Models
 {
-    public class UserContext : DbContext
+    public class ZkContext : DbContext
     {
-        public UserContext(DbContextOptions<UserContext> options) : base(options) { }
+        public ZkContext(DbContextOptions<ZkContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserPending> UserPendings { get; set; }
     }
 
     public class User
@@ -30,5 +31,19 @@ namespace WebApiZkteco.Models
         public int iFaceIndex { get; set; }
         public string sFaceData { get; set; }
         public int iFaceLen { get; set; }
+    }
+
+    public class UserPending
+    {
+        [Key]
+        public int id { get; set; }
+        public User user { get; set; }
+        public DateTime activeAt { get; set; }
+
+        public UserPending(User _user, DateTime _activeAt)
+        {
+            user = _user;
+            activeAt = _activeAt;
+        }
     }
 }
