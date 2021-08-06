@@ -187,7 +187,6 @@ namespace WebApiZkteco.Services
             bool bEnabled = false;
 
             axCZKEM1.EnableDevice(iMachineNumber, false);
-
             axCZKEM1.ReadAllUserID(iMachineNumber);//read all the user information to the memory
             axCZKEM1.ReadAllTemplate(iMachineNumber);//read all the users' fingerprint templates to the memory
             while (axCZKEM1.SSR_GetAllUserInfo(iMachineNumber, out sUserID, out sName, out sPassword, out iPrivilege, out bEnabled))//get all the users' information from the memory
@@ -203,10 +202,9 @@ namespace WebApiZkteco.Services
                 {
                     GetFinger(ref user);
                     GetFace(ref user);
-                    users.Add(user);
                 }
+                users.Add(user);
             }
-
             axCZKEM1.EnableDevice(iMachineNumber, true);
         }
 
@@ -295,6 +293,7 @@ namespace WebApiZkteco.Services
             //}
 
             // Check if finger already deleted 
+            axCZKEM1.EnableDevice(iMachineNumber, false);
             if (!GetFinger(ref user))
                 throw new Exception("Finger already deleted before");
 
@@ -308,9 +307,11 @@ namespace WebApiZkteco.Services
                 else
                 {
                     axCZKEM1.GetLastError(ref idwErrorCode);
+                    axCZKEM1.EnableDevice(iMachineNumber, true);
                     throw new Exception("Operation failed,ErrorCode=" + idwErrorCode.ToString());
                 }
             }
+            axCZKEM1.EnableDevice(iMachineNumber, true);
         }
         private bool GetFace(ref UserInfo user)
         {
@@ -341,11 +342,11 @@ namespace WebApiZkteco.Services
             // get finger data
             for (idwFingerIndex = 0; idwFingerIndex < 10; idwFingerIndex++)
             {
-                if (axCZKEM1.GetUserTmpExStr(iMachineNumber, user.sUserID, idwFingerIndex, out iFlag, out sTmpData, out iTmpLength))//get the corresponding templates string and length from the memory
+                if (axCZKEM1.SSR_GetUserTmpStr(iMachineNumber, user.sUserID, idwFingerIndex, out sTmpData, out iTmpLength))//get the corresponding templates string and length from the memory
                 {
                     found = true;
                     user.idwFingerIndex = idwFingerIndex;
-                    user.iFingerFlag = iFlag;
+                    //user.iFingerFlag = iFlag;
                     user.sFingerData = sTmpData;
                     user.iFingerLen = iTmpLength;
                 }
