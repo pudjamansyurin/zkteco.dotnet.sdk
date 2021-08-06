@@ -10,11 +10,11 @@ namespace WebApiZkteco.Services
     {
         bool Connect();
         void Disconnect();
-        int GetDeviceInfo(ref DeviceInfo info);
-        void GetUserInfo(string sUserID, ref UserInfo user);
-        void GetUsersInfo(ref List<UserInfo> users);
-        void SetUserInfo(UserInfo user);
-        void DeleteUserInfo(UserInfo user);
+        int GetDeviceInfo(ref Device info);
+        void GetUser(string sUserID, ref User user);
+        void GetUsers(ref List<User> users);
+        void SetUser(User user);
+        void DeleteUser(User user);
     }
 
     public class SdkService : ISdkService
@@ -80,7 +80,7 @@ namespace WebApiZkteco.Services
             bIsConnected = state;
         }
 
-        public int GetDeviceInfo(ref DeviceInfo info)
+        public int GetDeviceInfo(ref Device info)
         {
             int iRet = 0;
 
@@ -148,7 +148,7 @@ namespace WebApiZkteco.Services
             return iRet;
         }
 
-        public void GetUserInfo(string sUserID, ref UserInfo user)
+        public void GetUser(string sUserID, ref User user)
         {
             if (GetConnectState() == false)
             {
@@ -192,7 +192,7 @@ namespace WebApiZkteco.Services
         //Only TFT screen devices with firmware version Ver 6.60 version later support function "GetUserTmpExStr" and "GetUserTmpEx".
         //'While you are using 9.0 fingerprint arithmetic and your device's firmware version is under ver6.60,you should use the functions "SSR_GetUserTmp" or 
         //"SSR_GetUserTmpStr" instead of "GetUserTmpExStr" or "GetUserTmpEx" in order to download the fingerprint templates.
-        public void GetUsersInfo(ref List<UserInfo> users)
+        public void GetUsers(ref List<User> users)
         {
             if (GetConnectState() == false)
             {
@@ -210,7 +210,7 @@ namespace WebApiZkteco.Services
             axCZKEM1.ReadAllTemplate(iMachineNumber);//read all the users' fingerprint templates to the memory
             while (axCZKEM1.SSR_GetAllUserInfo(iMachineNumber, out sUserID, out sName, out sPassword, out iPrivilege, out bEnabled))//get all the users' information from the memory
             {
-                UserInfo user = new UserInfo();
+                User user = new User();
                 user.sUserID = sUserID;
                 user.sName = sName;
                 user.sPassword = sPassword;
@@ -232,7 +232,7 @@ namespace WebApiZkteco.Services
         //Only TFT screen devices with firmware version Ver 6.60 version later support function "SetUserTmpExStr" and "SetUserTmpEx".
         //While you are using 9.0 fingerprint arithmetic and your device's firmware version is under ver6.60,you should use the functions "SSR_SetUserTmp" or 
         //"SSR_SetUserTmpStr" instead of "SetUserTmpExStr" or "SetUserTmpEx" in order to upload the fingerprint templates.
-        public void SetUserInfo(UserInfo user)
+        public void SetUser(User user)
         {
             if (GetConnectState() == false)
             {
@@ -282,7 +282,7 @@ namespace WebApiZkteco.Services
         //Delete a certain user's fingerprint template of specified index
         //You shuold input the the user id and the fingerprint index you will delete
         //The difference between the two functions "SSR_DelUserTmpExt" and "SSR_DelUserTmp" is that the former supports 24 bits' user id.
-        public void DeleteUserInfo(UserInfo user)
+        public void DeleteUser(User user)
         {
             if (GetConnectState() == false)
             {
@@ -332,7 +332,7 @@ namespace WebApiZkteco.Services
             }
             axCZKEM1.EnableDevice(iMachineNumber, true);
         }
-        private bool GetFace(ref UserInfo user)
+        private bool GetFace(ref User user)
         {
             string sTmpData = "";
             int iTmpLength = 0;
@@ -350,10 +350,10 @@ namespace WebApiZkteco.Services
             return found;
         }
 
-        private bool GetFinger(ref UserInfo user)
+        private bool GetFinger(ref User user)
         {
             int idwFingerIndex;
-            int iFlag = 0;
+            //int iFlag = 0;
             string sTmpData = "";
             int iTmpLength = 0;
             bool found = false;
@@ -372,101 +372,5 @@ namespace WebApiZkteco.Services
             }
             return found;
         }
-
-        //        //Delete a certain user's face template according to its id
-        //        private void btnDelUserFace_Click(object sender, EventArgs e)
-        //        {
-        //            if (bIsConnected == false)
-        //            {
-        //                MessageBox.Show("Please connect the device first!", "Error");
-        //                return;
-        //            }
-
-        //            if (cbUserID3.Text.Trim() == "")
-        //            {
-        //                MessageBox.Show("Please input the UserID first!", "Error");
-        //                return;
-        //            }
-        //            int idwErrorCode = 0;
-
-        //            string sUserID = cbUserID3.Text.Trim();
-        //            int iFaceIndex = 50;
-
-        //            Cursor = Cursors.WaitCursor;
-        //            if (axCZKEM1.DelUserFace(iMachineNumber, sUserID, iFaceIndex))
-        //            {
-        //                axCZKEM1.RefreshData(iMachineNumber);
-        //                MessageBox.Show("DelUserFace,UserID=" + sUserID, "Success");
-        //            }
-        //            else
-        //            {
-        //                axCZKEM1.GetLastError(ref idwErrorCode);
-        //                MessageBox.Show("Operation failed,ErrorCode=" + idwErrorCode.ToString(), "Error");
-        //            }
-        //            Cursor = Cursors.Default;
-
-        //        }
-
-        //        //Delete all the user information in the device,while the related fingerprint templates will be deleted either. 
-        //        //(While the parameter DataFlag  of the Function "ClearData" is 5 )
-        //        private void btnClearDataUserInfo_Click(object sender, EventArgs e)
-        //        {
-        //            if (bIsConnected == false)
-        //            {
-        //                MessageBox.Show("Please connect the device first!", "Error");
-        //                return;
-        //            }
-        //            int idwErrorCode = 0;
-
-        //            int iDataFlag = 5;
-
-        //            Cursor = Cursors.WaitCursor;
-        //            if (axCZKEM1.ClearData(iMachineNumber, iDataFlag))
-        //            {
-        //                axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
-        //                MessageBox.Show("Clear all the UserInfo data!", "Success");
-        //            }
-        //            else
-        //            {
-        //                axCZKEM1.GetLastError(ref idwErrorCode);
-        //                MessageBox.Show("Operation failed,ErrorCode=" + idwErrorCode.ToString(), "Error");
-        //            }
-        //            Cursor = Cursors.Default;
-        //        }
-
-        //        //Delete a kind of data that some user has enrolled
-        //        //The range of the Backup Number is from 0 to 9 and the specific meaning of Backup number is described in the development manual,pls refer to it.
-        //        private void btnDeleteEnrollData_Click(object sender, EventArgs e)
-        //        {
-        //            if (bIsConnected == false)
-        //            {
-        //                MessageBox.Show("Please connect the device first!", "Error");
-        //                return;
-        //            }
-
-        //            if (cbUserIDDE.Text.Trim() == "" || cbBackupDE.Text.Trim() == "")
-        //            {
-        //                MessageBox.Show("Please input the UserID and BackupNumber first!", "Error");
-        //                return;
-        //            }
-        //            int idwErrorCode = 0;
-
-        //            string sUserID = cbUserIDDE.Text.Trim();
-        //            int iBackupNumber = Convert.ToInt32(cbBackupDE.Text.Trim());
-
-        //            Cursor = Cursors.WaitCursor;
-        //            if (axCZKEM1.SSR_DeleteEnrollData(iMachineNumber, sUserID, iBackupNumber))
-        //            {
-        //                axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
-        //                MessageBox.Show("DeleteEnrollData,UserID=" + sUserID + " BackupNumber=" + iBackupNumber.ToString(), "Success");
-        //            }
-        //            else
-        //            {
-        //                axCZKEM1.GetLastError(ref idwErrorCode);
-        //                MessageBox.Show("Operation failed,ErrorCode=" + idwErrorCode.ToString(), "Error");
-        //            }
-        //            Cursor = Cursors.Default;
-        //        }
-
     }
 }

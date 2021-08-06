@@ -7,11 +7,17 @@ namespace WebApiZkteco.Models
 {
     public class User
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int FingerIdx { get; set; }
-        public int Priviledge { get; set; }
-        public string Password { get; set; }
-        public bool Enabled { get; set; }
+        public string sUserID { get; set; }
+        public string sName { get; set; }
+        public string sPassword { get; set; }
+        public int iPrivilege { get; set; }
+        public bool bEnabled { get; set; }
+        public int idwFingerIndex { get; set; }
+        public int iFingerFlag { get; set; }
+        public string sFingerData { get; set; }
+        public int iFingerLen { get; set; }
+        public int iFaceIndex { get; set; }
+        public string sFaceData { get; set; }
+        public int iFaceLen { get; set; }
     }
 }

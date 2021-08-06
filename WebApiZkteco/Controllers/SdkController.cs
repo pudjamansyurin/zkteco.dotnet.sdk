@@ -22,12 +22,12 @@ namespace WebApiZkteco.Controllers
             sdk = _sdk;
         }
 
-        [HttpGet("device-info")]
+        [HttpGet("device")]
         public ActionResult DeviceInfo()
         {
             try
             {
-                DeviceInfo info = new DeviceInfo();
+                Device info = new Device();
                 sdk.GetDeviceInfo(ref info);
                 return Ok(info);
             }
@@ -37,21 +37,21 @@ namespace WebApiZkteco.Controllers
             }
         }
 
-        [HttpGet("user-info/{sUserID?}")]
-        public ActionResult GetUserInfo(string sUserID)
+        [HttpGet("user/{sUserID?}")]
+        public ActionResult GetUser(string sUserID)
         {
             try
             {
-                List<UserInfo> users = new List<UserInfo>();
+                List<User> users = new List<User>();
 
                 if (sUserID == null)
                 {
-                    sdk.GetUsersInfo(ref users);
+                    sdk.GetUsers(ref users);
                 }
                 else
                 {
-                    UserInfo user = new UserInfo();
-                    sdk.GetUserInfo(sUserID, ref user);
+                    User user = new User();
+                    sdk.GetUser(sUserID, ref user);
                     users.Add(user);
                 }
 
@@ -69,14 +69,14 @@ namespace WebApiZkteco.Controllers
         }
 
 
-        [HttpPut("user-info/{sUserID}")]
-        public ActionResult SetUserInfo(string sUserID)
+        [HttpPut("user/{sUserID}")]
+        public ActionResult SetUser(string sUserID)
         {
             try
             {
                 var user = FindUserInDB(sUserID);
 
-                sdk.SetUserInfo(user);
+                sdk.SetUser(user);
 
                 return Ok("User " + sUserID + " uploaded");
             }
@@ -87,14 +87,14 @@ namespace WebApiZkteco.Controllers
         }
 
 
-        [HttpDelete("user-info/{sUserID}")]
-        public ActionResult DeleteUserInfo(string sUserID)
+        [HttpDelete("user/{sUserID}")]
+        public ActionResult DeleteUser(string sUserID)
         {
             try
             {
                 var user = FindUserInDB(sUserID);
 
-                sdk.DeleteUserInfo(user);
+                sdk.DeleteUser(user);
 
                 return Ok("User " + sUserID + " deleted");
             }
@@ -104,12 +104,12 @@ namespace WebApiZkteco.Controllers
             }
         }
 
-        private UserInfo FindUserInDB(string sUserID)
+        private User FindUserInDB(string sUserID)
         {
             // TODO: read from database
             string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
             string jsonString = System.IO.File.ReadAllText(fileName);
-            List<UserInfo> users = JsonSerializer.Deserialize<List<UserInfo>>(jsonString);
+            List<User> users = JsonSerializer.Deserialize<List<User>>(jsonString);
 
             // Check is user exist
             try
