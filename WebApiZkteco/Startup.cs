@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApiZkteco.Data;
 using WebApiZkteco.Services;
+using WebApiZkteco.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApiZkteco
