@@ -29,7 +29,10 @@ namespace WebApiZkteco
         {
             services.AddControllers();
             services.AddScoped<ISdkService>(
-                x => new SdkService("192.168.0.22", 4370)
+                x => new SdkService(
+                    Configuration.GetConnectionString("ZkIpAddress"),
+                    int.Parse(Configuration.GetConnectionString("ZkPort"))
+                )
             );
             services.AddDbContext<ZkContext>(
                 options => options.UseSqlServer(
