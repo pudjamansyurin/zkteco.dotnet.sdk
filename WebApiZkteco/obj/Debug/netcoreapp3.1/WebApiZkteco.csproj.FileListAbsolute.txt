@@ -246,7 +246,6 @@ C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\bin\Debug\netcoreapp3.
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\bin\Debug\netcoreapp3.1\Interop.zkemkeeper.dll
-C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.csproj.AssemblyReference.cache
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\Interop.zkemkeeper.dll
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.csproj.ResolveComReference.cache
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.AssemblyInfoInputs.cache
@@ -261,3 +260,4 @@ C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.dll
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.pdb
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.genruntimeconfig.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.csproj.AssemblyReference.cache

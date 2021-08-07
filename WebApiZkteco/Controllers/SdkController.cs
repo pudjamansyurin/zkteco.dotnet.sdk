@@ -15,13 +15,13 @@ namespace WebApiZkteco.Controllers
     [ApiController]
     public class SdkController : ControllerBase
     {
-        private readonly ISdkService sdk;
-        private readonly ZkContext ctx;
+        private readonly ISdkService _sdk;
+        private readonly IUserService _user;
 
-        public SdkController(ISdkService sdkService, ZkContext context)
+        public SdkController(ISdkService sdkService, IUserService userService)
         {
-            sdk = sdkService;
-            ctx = context;
+            _sdk = sdkService;
+            _user = userService;
         }
 
         [HttpGet("device")]
@@ -30,7 +30,7 @@ namespace WebApiZkteco.Controllers
             try
             {
                 Device info = new Device();
-                sdk.GetDeviceInfo(ref info);
+                _sdk.GetDeviceInfo(ref info);
                 return Ok(info);
             }
             catch (Exception e)
@@ -44,39 +44,20 @@ namespace WebApiZkteco.Controllers
         {
             try
             {
-                List<User> users = new List<User>();
-
                 if (sUserID == null)
                 {
-                    sdk.GetUsers(ref users);
+                    List<User> users = new List<User>();
+                    _sdk.GetUsers(ref users);
+                    users.ForEach(u => _user.AddOrUpdate(u));
+                    return Ok(_user.GetAll());
                 }
                 else
                 {
                     User user = new User();
-                    sdk.GetUser(sUserID, ref user);
-                    users.Add(user);
+                    _sdk.GetUser(sUserID, ref user);
+                    _user.AddOrUpdate(user);
+                    return Ok(_user.Get(user.sUserID));
                 }
-
-                // save to database
-                users.ForEach(u =>
-                {
-                    if (ctx.Users.Any(e => e.sUserID == u.sUserID))
-                    {
-                        ctx.Users.Update(u);
-                    }
-                    else
-                    {
-                        ctx.Users.Add(u);
-                    }
-                    ctx.SaveChanges();
-                });
-
-                // save to JSON
-                //string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
-                //string jsonString = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
-                //System.IO.File.WriteAllText(fileName, jsonString);
-
-                return Ok(users);
             }
             catch (Exception e)
             {
@@ -90,21 +71,10 @@ namespace WebApiZkteco.Controllers
         {
             try
             {
-                var user = FindUser(sUserID);
-
-                if (!ctx.UserPendings.Any(u => u.user == user))
-                {
-                    return Conflict("User " + user.sUserID + " already active");
-                }
-
-                sdk.SetUser(user);
-
-                // delete from pending user
-                var pending = ctx.UserPendings.First(u => u.user == user);
-                ctx.UserPendings.Remove(pending);
-                ctx.SaveChanges();
-
-                return Ok("User " + sUserID + " finger enabled");
+                var user = _user.Get(sUserID);
+                _sdk.SetUser(user);
+                _user.Enable(user);
+                return Ok("User " + sUserID + " enabled");
             }
             catch (Exception e)
             {
@@ -114,50 +84,18 @@ namespace WebApiZkteco.Controllers
 
 
         [HttpDelete("user/{sUserID}")]
-        public ActionResult DisableUser(string sUserID, [FromBody] DateTime activeAt)
+        public ActionResult DisableUser(string sUserID, [FromForm] DateTime activeAt)
         {
-            // TODO: parse datetime from user request
-            return Ok(sUserID + "" + activeAt);
-
             try
             {
-                var user = FindUser(sUserID); // check is user exist
-
-                if (ctx.UserPendings.Any(u => u.user == user))
-                {
-                    return Conflict("User " + user.sUserID + " already disabled");
-                }
-
-                sdk.DeleteUser(user);
-
-                // insert to pending user
-                ctx.UserPendings.Add(new UserPending(user, activeAt));
-                ctx.SaveChanges();
-
+                var user = _user.Get(sUserID);
+                _sdk.DeleteUser(user);
+                _user.Disable(user, activeAt);
                 return Ok("User " + sUserID + " finger disabled");
             }
             catch (Exception e)
             {
                 return Conflict(e.Message);
-            }
-        }
-
-        private User FindUser(string sUserID)
-        {
-            //// read from JSON
-            //string fileName = Path.Combine(Environment.CurrentDirectory, "users.json");
-            //string jsonString = System.IO.File.ReadAllText(fileName);
-            //List<User> users = JsonSerializer.Deserialize<List<User>>(jsonString);
-
-            // Check is user exist
-            try
-            {
-                //return users.Where(u => u.sUserID == sUserID).First();
-                return ctx.Users.First(u => u.sUserID == sUserID);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("User not found: ", e);
             }
         }
     }

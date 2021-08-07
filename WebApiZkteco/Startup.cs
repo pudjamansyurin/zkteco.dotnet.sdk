@@ -28,17 +28,18 @@ namespace WebApiZkteco
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<ZkContext>(
+                options => options.UseSqlServer(
+                    Configuration.GetConnectionString("ZkContext")
+                )
+            );
             services.AddScoped<ISdkService>(
                 x => new SdkService(
                     Configuration.GetConnectionString("ZkIpAddress"),
                     int.Parse(Configuration.GetConnectionString("ZkPort"))
                 )
             );
-            services.AddDbContext<ZkContext>(
-                options => options.UseSqlServer(
-                    Configuration.GetConnectionString("ZkContext")
-                )
-            );
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

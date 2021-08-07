@@ -24,7 +24,13 @@ namespace WebApiZkteco.Migrations
                     b.Property<string>("sUserID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("activeAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("bEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("disabled")
                         .HasColumnType("bit");
 
                     b.Property<int>("iFaceIndex")
@@ -60,35 +66,6 @@ namespace WebApiZkteco.Migrations
                     b.HasKey("sUserID");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("WebApiZkteco.Models.UserPending", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("activeAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("usersUserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("usersUserID");
-
-                    b.ToTable("UserPendings");
-                });
-
-            modelBuilder.Entity("WebApiZkteco.Models.UserPending", b =>
-                {
-                    b.HasOne("WebApiZkteco.Models.User", "user")
-                        .WithMany()
-                        .HasForeignKey("usersUserID");
-
-                    b.Navigation("user");
                 });
 #pragma warning restore 612, 618
         }

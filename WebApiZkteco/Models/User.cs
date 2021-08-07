@@ -12,7 +12,6 @@ namespace WebApiZkteco.Models
     {
         public ZkContext(DbContextOptions<ZkContext> options) : base(options) { }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserPending> UserPendings { get; set; }
     }
 
     public class User
@@ -24,26 +23,17 @@ namespace WebApiZkteco.Models
         public string sPassword { get; set; }
         public int iPrivilege { get; set; }
         public bool bEnabled { get; set; }
+
         public int idwFingerIndex { get; set; }
         public int iFingerFlag { get; set; }
         public string sFingerData { get; set; }
         public int iFingerLen { get; set; }
+
         public int iFaceIndex { get; set; }
         public string sFaceData { get; set; }
         public int iFaceLen { get; set; }
-    }
 
-    public class UserPending
-    {
-        [Key]
-        public int id { get; set; }
-        public User user { get; set; }
+        public bool disabled { get; set; }
         public DateTime activeAt { get; set; }
-
-        public UserPending(User _user, DateTime _activeAt)
-        {
-            user = _user;
-            activeAt = _activeAt;
-        }
     }
 }
