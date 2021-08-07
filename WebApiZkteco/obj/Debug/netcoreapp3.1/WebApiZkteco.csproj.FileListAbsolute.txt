@@ -261,3 +261,4 @@ C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.pdb
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.genruntimeconfig.cache
 C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\obj\Debug\netcoreapp3.1\WebApiZkteco.csproj.AssemblyReference.cache
+C:\Users\asus\OneDrive\Documents\_ZKTECO_SDK\WebApiZkteco\bin\Debug\netcoreapp3.1\Cronos.dll

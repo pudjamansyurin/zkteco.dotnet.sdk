@@ -16,8 +16,8 @@ namespace WebApiZkteco.Services
         void Delete(User user);
         void Enable(User user);
         void Disable(User user, DateTime activeAt);
-
-
+        bool HasPending();
+        List<User> GetPending();
     }
 
     public class UserService : IUserService
@@ -106,26 +106,39 @@ namespace WebApiZkteco.Services
 
         public void Enable(User user)
         {
-            if (!user.disabled)
+            if (user.disabled)
             {
-                throw new Exception("User " + user.sUserID + " already active");
+                //throw new Exception("User " + user.sUserID + " already active");
+                user.disabled = false;
+                user.activeAt = new DateTime();
+                ctx.SaveChanges();
             }
-
-            user.disabled = false;
-            user.activeAt = new DateTime();
-            ctx.SaveChanges();
         }
 
         public void Disable(User user, DateTime activeAt)
         {
-            if (user.disabled)
+            if (!user.disabled)
             {
-                throw new Exception("User " + user.sUserID + " already disabled");
+                //throw new Exception("User " + user.sUserID + " already disabled");
+                user.disabled = true;
+                user.activeAt = activeAt;
+                ctx.SaveChanges();
             }
+        }
 
-            user.disabled = true;
-            user.activeAt = activeAt;
-            ctx.SaveChanges();
+        public bool HasPending()
+        {
+            return ctx.Users.Any(shouldActive);
+        }
+
+        public List<User> GetPending()
+        {
+            return ctx.Users.Where(shouldActive).ToList();
+        }
+
+        private bool shouldActive(User u)
+        {
+            return u.disabled == true && DateTime.Now >= u.activeAt;
         }
     }
 }

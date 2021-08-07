@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using WebApiZkteco.Services;
 using WebApiZkteco.Models;
 using Microsoft.EntityFrameworkCore;
+using WebApiZkteco.Jobs;
 
 namespace WebApiZkteco
 {
@@ -28,18 +29,27 @@ namespace WebApiZkteco
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             services.AddDbContext<ZkContext>(
                 options => options.UseSqlServer(
-                    Configuration.GetConnectionString("ZkContext")
-                )
+                    Configuration.GetConnectionString("LocalDB")
+                ),
+                ServiceLifetime.Transient,
+                ServiceLifetime.Singleton
             );
-            services.AddScoped<ISdkService>(
+            services.AddSingleton<ISdkService>(
                 x => new SdkService(
-                    Configuration.GetConnectionString("ZkIpAddress"),
-                    int.Parse(Configuration.GetConnectionString("ZkPort"))
+                    Configuration["ZkTeco:Ip"],
+                    int.Parse(Configuration["ZkTeco:Port"])
                 )
             );
-            services.AddScoped<IUserService, UserService>();
+            services.AddSingleton<IUserService, UserService>();
+
+            services.AddCronJob<UserActivatorJob>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Local;
+                c.CronExpression = @"* * * * *";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
