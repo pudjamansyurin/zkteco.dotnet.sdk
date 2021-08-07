@@ -16,8 +16,8 @@ api.interceptors.request.use((req) => {
 
 api.interceptors.response.use(
   (res) => {
-    console.log(res.data.json);
-    return res;
+    console.log(res.data);
+    return res.data;
   },
   (err) => {
     if (err?.response?.status === 404)

@@ -1,10 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { DataGrid } from "@material-ui/data-grid";
+import {
+  DataGrid,
+  GridOverlay,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarExport,
+  GridToolbarDensitySelector,
+} from "@material-ui/data-grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import api from "utils/api";
+import { columns } from "config/user";
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -14,32 +35,36 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
   fixedHeight: {
-    height: 240,
+    height: 550,
+    width: "100%",
   },
+  loading: { position: "absolute", top: 0, width: "100%" },
 }));
 
-const rows = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "XGrid", col2: "is Awesome" },
-  { id: 3, col1: "Material-UI", col2: "is Amazing" },
-];
-const columns = [
-  { field: "col1", headerName: "Column 1", width: 150 },
-  { field: "col2", headerName: "Column 2", width: 150 },
-];
+function CustomLoadingOverlay() {
+  const classes = useStyles();
+
+  return (
+    <GridOverlay>
+      <div className={classes.loading}>
+        <LinearProgress />
+      </div>
+    </GridOverlay>
+  );
+}
 
 export const UserPage = () => {
   const classes = useStyles();
-  // const [user, setUser] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   useEffect(() => {
     api
-      .get("user")
-      .then((res) => {
-        console.info(res);
-      })
-      .catch((err) => console.error(err));
+      .get("sdk/user")
+      .then((data) => setUsers(data))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -47,7 +72,17 @@ export const UserPage = () => {
       {/* <Grid item xs={12} md={8} lg={9}> */}
       <Grid item xs={12}>
         <Paper className={fixedHeightPaper}>
-          <DataGrid rows={rows} columns={columns} checkboxSelection />
+          <DataGrid
+            rows={users}
+            columns={columns}
+            getRowId={(row) => row.sUserID}
+            components={{
+              Toolbar: CustomToolbar,
+              LoadingOverlay: CustomLoadingOverlay,
+            }}
+            loading={loading}
+            checkboxSelection
+          />
         </Paper>
       </Grid>
       {/* <Grid item xs={12} md={4} lg={3}>
