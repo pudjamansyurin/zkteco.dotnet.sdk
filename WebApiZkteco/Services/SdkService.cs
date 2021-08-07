@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ namespace WebApiZkteco.Services
 
     public class SdkService : ISdkService
     {
+        private readonly ILogger<SdkService> _logger;
 
         private string Ip;
         private Int32 Port;
@@ -26,12 +29,15 @@ namespace WebApiZkteco.Services
         private int iMachineNumber;//the serial number of the device.After connecting the device ,this value will be changed.
         private zkemkeeper.CZKEMClass axCZKEM1;
 
-        public SdkService(string ip, Int32 port)
+        public SdkService(IConfiguration config, ILogger<SdkService> logger)
         {
-            Ip = ip;
-            Port = port;
+            _logger = logger;
+
+            Ip = config["ZkTeco:Ip"];
+            Port = int.Parse(config["ZkTeco:Port"]);
             bIsConnected = false;
             iMachineNumber = 1;
+
             axCZKEM1 = new zkemkeeper.CZKEMClass(); //Create Standalone SDK class dynamicly.
 
             // Connect to device
@@ -253,13 +259,13 @@ namespace WebApiZkteco.Services
                 if (user.iFingerLen > 0 && user.sFingerData != null)
                 {
                     if (axCZKEM1.SetUserTmpExStr(iMachineNumber, user.sUserID, user.idwFingerIndex, user.iFingerFlag, user.sFingerData))//upload templates information to the device
-                        Console.WriteLine("Successfully upload fingerprint template");
+                        _logger.LogInformation("Successfully upload fingerprint template");
                 }
                 // upload face
                 // if (user.iFaceLen > 0 && user.sFaceData != null)
                 // {
                 //    if (axCZKEM1.SetUserFaceStr(iMachineNumber, user.sUserID, user.iFaceIndex, user.sFaceData, user.iFaceLen))//upload face templates information to the device
-                //        Console.WriteLine("Successfully upload face template");
+                //        _logger.LogInformation("Successfully upload face template");
                 //    else
                 //    {
                 //        axCZKEM1.GetLastError(ref idwErrorCode);
@@ -302,7 +308,7 @@ namespace WebApiZkteco.Services
             //    if (axCZKEM1.DelUserFace(iMachineNumber, user.sUserID, user.iFaceIndex))
             //    {
             //        axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
-            //        Console.WriteLine("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FaceIndex:" + user.iFaceIndex);
+            //        _logger.LogInformation("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FaceIndex:" + user.iFaceIndex);
             //    }
             //    else
             //    {
@@ -321,7 +327,7 @@ namespace WebApiZkteco.Services
                 if (axCZKEM1.SSR_DelUserTmpExt(iMachineNumber, user.sUserID, user.idwFingerIndex))
                 {
                     axCZKEM1.RefreshData(iMachineNumber);//the data in the device should be refreshed
-                    Console.WriteLine("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FingerIndex:" + user.idwFingerIndex);
+                    _logger.LogInformation("SSR_DelUserTmpExt,UserID:" + user.sUserID + " FingerIndex:" + user.idwFingerIndex);
                 }
                 else
                 {

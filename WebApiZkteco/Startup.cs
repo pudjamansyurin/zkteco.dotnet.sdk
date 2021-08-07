@@ -37,12 +37,7 @@ namespace WebApiZkteco
                 ServiceLifetime.Transient,
                 ServiceLifetime.Singleton
             );
-            services.AddSingleton<ISdkService>(
-                x => new SdkService(
-                    Configuration["ZkTeco:Ip"],
-                    int.Parse(Configuration["ZkTeco:Port"])
-                )
-            );
+            services.AddSingleton<ISdkService, SdkService>();
             services.AddSingleton<IUserService, UserService>();
 
             services.AddCronJob<UserActivatorJob>(c =>

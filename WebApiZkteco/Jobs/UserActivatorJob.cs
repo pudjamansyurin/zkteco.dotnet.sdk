@@ -30,11 +30,17 @@ namespace WebApiZkteco.Jobs
 
         public override Task DoWork(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"{DateTime.Now:hh:mm:ss} UserActivatorJob checking pending users");
+            var users = _user.GetPending();
 
-            if (_user.HasPending())
+            if (users.Count == 0)
             {
-                _user.GetPending().ForEach(u =>
+                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} UserActivatorJob no pending users");
+            }
+            else
+            {
+                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} UserActivatorJob got "+ users.Count +" pending users");
+
+                users.ForEach(u =>
                 {
                     _logger.LogInformation("Enabling user " + u.sUserID);
                     try

@@ -16,7 +16,6 @@ namespace WebApiZkteco.Services
         void Delete(User user);
         void Enable(User user);
         void Disable(User user, DateTime activeAt);
-        bool HasPending();
         List<User> GetPending();
     }
 
@@ -124,11 +123,6 @@ namespace WebApiZkteco.Services
                 user.activeAt = activeAt;
                 ctx.SaveChanges();
             }
-        }
-
-        public bool HasPending()
-        {
-            return ctx.Users.Any(shouldActive);
         }
 
         public List<User> GetPending()
