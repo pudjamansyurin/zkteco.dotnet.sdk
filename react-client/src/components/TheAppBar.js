@@ -12,6 +12,12 @@ import Typography from "@material-ui/core/Typography";
 import { drawerWidth } from "config";
 
 const useStyles = makeStyles((theme) => ({
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  title: {
+    flexGrow: 1,
+  },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
@@ -35,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TheAppBar = ({ open, handleClick }) => {
+const TheAppBar = ({ open, onMenuOpen }) => {
   const classes = useStyles();
 
   return (
@@ -48,7 +54,7 @@ const TheAppBar = ({ open, handleClick }) => {
           edge="start"
           color="inherit"
           aria-label="open drawer"
-          onClick={handleClick}
+          onClick={onMenuOpen}
           className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
         >
           <MenuIcon />
@@ -74,7 +80,7 @@ const TheAppBar = ({ open, handleClick }) => {
 
 TheAppBar.propTypes = {
   open: PropTypes.bool,
-  handleClick: PropTypes.func,
+  onMenuOpen: PropTypes.func,
 };
 
 export default TheAppBar;
