@@ -3,11 +3,10 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import { menuItems } from "config/menuItems";
+import TheMenuList from "components/TheMenuList";
 import { drawerWidth } from "config";
 
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +56,7 @@ function TheDrawer({ open, onMenuClose }) {
         </IconButton>
       </div>
       <Divider />
-      <List>{menuItems}</List>
+      <TheMenuList></TheMenuList>
     </Drawer>
   );
 }
