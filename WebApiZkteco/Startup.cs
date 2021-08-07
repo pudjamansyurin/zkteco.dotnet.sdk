@@ -30,15 +30,13 @@ namespace WebApiZkteco
         {
             services.AddControllers();
 
-            services.AddDbContext<ZkContext>(
+            services.AddDbContextPool<ZkContext>(
                 options => options.UseSqlServer(
                     Configuration.GetConnectionString("LocalDB")
-                ),
-                ServiceLifetime.Transient,
-                ServiceLifetime.Singleton
+                )
             );
-            services.AddSingleton<ISdkService, SdkService>();
-            services.AddSingleton<IUserService, UserService>();
+            services.AddScoped<ISdkService, SdkService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddCronJob<UserActivatorJob>(c =>
             {
@@ -57,7 +55,14 @@ namespace WebApiZkteco
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseEndpoints(endpoints =>
             {
