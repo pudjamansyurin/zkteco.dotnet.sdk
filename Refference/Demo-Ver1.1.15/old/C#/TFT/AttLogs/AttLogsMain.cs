@@ -205,19 +205,19 @@ namespace AttLogs
             }
 
             string sdwEnrollNumber = "";
-            int idwTMachineNumber=0;
-            int idwEMachineNumber=0;
-            int idwVerifyMode=0;
-            int idwInOutMode=0;
-            int idwYear=0;
-            int idwMonth=0;
-            int idwDay=0;
-            int idwHour=0;
-            int idwMinute=0;
+            int idwTMachineNumber = 0;
+            int idwEMachineNumber = 0;
+            int idwVerifyMode = 0;
+            int idwInOutMode = 0;
+            int idwYear = 0;
+            int idwMonth = 0;
+            int idwDay = 0;
+            int idwHour = 0;
+            int idwMinute = 0;
             int idwSecond = 0;
             int idwWorkcode = 0;
-           
-            int idwErrorCode=0;
+
+            int idwErrorCode = 0;
             int iGLCount = 0;
             int iIndex = 0;
 
@@ -246,11 +246,11 @@ namespace AttLogs
 
                 if (idwErrorCode != 0)
                 {
-                    MessageBox.Show("Reading data from terminal failed,ErrorCode: " + idwErrorCode.ToString(),"Error");
+                    MessageBox.Show("Reading data from terminal failed,ErrorCode: " + idwErrorCode.ToString(), "Error");
                 }
                 else
                 {
-                    MessageBox.Show("No data from terminal returns!","Error");
+                    MessageBox.Show("No data from terminal returns!", "Error");
                 }
             }
             axCZKEM1.EnableDevice(iMachineNumber, true);//enable the device
@@ -307,4 +307,4 @@ namespace AttLogs
         }
         #endregion
     }
-} 
+}

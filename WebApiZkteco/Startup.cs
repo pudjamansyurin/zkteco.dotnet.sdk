@@ -13,6 +13,7 @@ using WebApiZkteco.Services;
 using WebApiZkteco.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApiZkteco.Jobs;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace WebApiZkteco
 {
@@ -43,6 +44,12 @@ namespace WebApiZkteco
                 c.TimeZoneInfo = TimeZoneInfo.Local;
                 c.CronExpression = @"* * * * *";
             });
+
+            // In production, the React files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,10 +60,6 @@ namespace WebApiZkteco
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-
-            //app.UseAuthorization();
-
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyMethod()
@@ -64,9 +67,27 @@ namespace WebApiZkteco
                 .SetIsOriginAllowed(origin => true) // allow any origin
                 .AllowCredentials()); // allow credentials
 
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+            app.UseRouting();
+            //app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller}/{action=Index}/{id?}");
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             });
         }
     }
