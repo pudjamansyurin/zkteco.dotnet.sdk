@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import {
   DataGrid,
   GridOverlay,
@@ -12,20 +13,9 @@ import {
   GridToolbarExport,
   GridToolbarDensitySelector,
 } from "@material-ui/data-grid";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import GridToolbarScheduler from "./GridToolbarScheduler";
 import api from "utils/api";
 import { columns } from "config/user";
-
-function CustomToolbar() {
-  return (
-    <GridToolbarContainer>
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-      <GridToolbarExport />
-    </GridToolbarContainer>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,6 +30,18 @@ const useStyles = makeStyles((theme) => ({
   },
   loading: { position: "absolute", top: 0, width: "100%" },
 }));
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExport />
+      <GridToolbarScheduler />
+    </GridToolbarContainer>
+  );
+}
 
 function CustomLoadingOverlay() {
   const classes = useStyles();
@@ -56,12 +58,13 @@ function CustomLoadingOverlay() {
 export const UserPage = () => {
   const classes = useStyles();
   const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   useEffect(() => {
     api
-      .get("sdk/user")
+      .get("user")
       .then((data) => setUsers(data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
@@ -80,8 +83,14 @@ export const UserPage = () => {
               Toolbar: CustomToolbar,
               LoadingOverlay: CustomLoadingOverlay,
             }}
+            onSelectionModelChange={(newSelectionModel) => {
+              setSelectedUsers(newSelectionModel);
+            }}
+            selectionModel={selectedUsers}
             loading={loading}
-            checkboxSelection
+            disableMultipleSelection
+            // checkboxSelection
+            // disableSelectionOnClick
           />
         </Paper>
       </Grid>

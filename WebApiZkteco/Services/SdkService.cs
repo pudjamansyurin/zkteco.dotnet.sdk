@@ -47,7 +47,7 @@ namespace WebApiZkteco.Services
             }
             catch (Exception e)
             {
-                throw e;
+                _logger.LogInformation(e.Message);
             }
         }
 

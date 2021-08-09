@@ -6,7 +6,6 @@ import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import TheMenuList from "components/TheMenuList";
 import { drawerWidth } from "config";
 
 const useStyles = makeStyles((theme) => ({
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TheDrawer({ open, onMenuClose }) {
+function TheDrawer({ children, open, onMenuClose }) {
   const classes = useStyles();
 
   return (
@@ -56,7 +55,7 @@ function TheDrawer({ open, onMenuClose }) {
         </IconButton>
       </div>
       <Divider />
-      <TheMenuList></TheMenuList>
+      {children}
     </Drawer>
   );
 }
