@@ -3,33 +3,44 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApiZkteco.Migrations
 {
-    public partial class AddDisabledColumn : Migration
+    public partial class AddUserScheduler : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "active",
+                table: "Users",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.AddColumn<DateTime>(
-                name: "activeAt",
+                name: "activeStart",
                 table: "Users",
                 type: "datetime2",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
-            migrationBuilder.AddColumn<bool>(
-                name: "disabled",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "activeStop",
                 table: "Users",
-                type: "bit",
+                type: "datetime2",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "activeAt",
+                name: "active",
                 table: "Users");
 
             migrationBuilder.DropColumn(
-                name: "disabled",
+                name: "activeStart",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "activeStop",
                 table: "Users");
         }
     }

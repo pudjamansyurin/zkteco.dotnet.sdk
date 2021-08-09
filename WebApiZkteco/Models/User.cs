@@ -33,7 +33,8 @@ namespace WebApiZkteco.Models
         public string sFaceData { get; set; }
         public int iFaceLen { get; set; }
 
-        public bool disabled { get; set; }
-        public DateTime activeAt { get; set; }
+        public DateTime activeStart { get; set; }
+        public DateTime activeStop { get; set; }
+        public bool active { get; set; }
     }
 }

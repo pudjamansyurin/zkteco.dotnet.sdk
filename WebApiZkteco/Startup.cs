@@ -39,7 +39,7 @@ namespace WebApiZkteco
             services.AddScoped<ISdkService, SdkService>();
             services.AddScoped<IUserService, UserService>();
 
-            services.AddCronJob<UserActivatorJob>(c =>
+            services.AddCronJob<UserSchedulerJob>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Local;
                 c.CronExpression = @"* * * * *";

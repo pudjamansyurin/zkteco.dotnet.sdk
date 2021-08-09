@@ -8,15 +8,17 @@ namespace WebApiZkteco.Services
 {
     public interface IUserService
     {
+        bool Any(string sUserID);
         User Get(string sUserID);
         List<User> GetAll();
         void Add(User user);
         void Update(User u);
         void AddOrUpdate(User u);
         void Delete(User user);
-        void Enable(User user);
-        void Disable(User user, DateTime activeAt);
-        List<User> GetPending();
+        void SetActive(User user, bool enable);
+        void Schedule(User user, DateTime start, DateTime stop);
+        List<User> OnSchedule();
+        List<User> OutSchedule();
     }
 
     public class UserService : IUserService
@@ -26,6 +28,11 @@ namespace WebApiZkteco.Services
         public UserService(ZkContext context)
         {
             ctx = context;
+        }
+
+        public bool Any(string sUserID)
+        {
+            return ctx.Users.Any(u => u.sUserID == sUserID);
         }
 
         public User Get(string sUserID)
@@ -47,8 +54,9 @@ namespace WebApiZkteco.Services
 
         public void Add(User user)
         {
-            user.disabled = false;
-            user.activeAt = new DateTime();
+            user.active = true;
+            user.activeStart = default;
+            user.activeStop = default;
 
             ctx.Users.Add(user);
             ctx.SaveChanges();
@@ -85,17 +93,14 @@ namespace WebApiZkteco.Services
 
         public void AddOrUpdate(User u)
         {
-            var user = Get(u.sUserID);
-
-            if (user.sUserID == null)
+            if (Any(u.sUserID))
             {
-                Add(user);
+                Update(u);
             }
             else
             {
-                Update(user);
+                Add(u);
             }
-
         }
 
         public void Delete(User user)
@@ -103,36 +108,33 @@ namespace WebApiZkteco.Services
             throw new NotImplementedException();
         }
 
-        public void Enable(User user)
+        public void SetActive(User user, bool enable)
         {
-            if (user.disabled)
+            user.active = enable;
+            ctx.SaveChanges();
+
+            if (!enable)
             {
-                //throw new Exception("User " + user.sUserID + " already active");
-                user.disabled = false;
-                user.activeAt = new DateTime();
-                ctx.SaveChanges();
+                Schedule(user, default, default);
             }
         }
 
-        public void Disable(User user, DateTime activeAt)
+
+        public void Schedule(User user, DateTime start, DateTime stop)
         {
-            if (!user.disabled)
-            {
-                //throw new Exception("User " + user.sUserID + " already disabled");
-                user.disabled = true;
-                user.activeAt = activeAt;
-                ctx.SaveChanges();
-            }
+            user.activeStart = start;
+            user.activeStop = stop;
+            ctx.SaveChanges();
         }
 
-        public List<User> GetPending()
+        public List<User> OnSchedule()
         {
-            return ctx.Users.Where(shouldActive).ToList();
+            return ctx.Users.Where(u => (DateTime.Now >= u.activeStart && DateTime.Now <= u.activeStop) && !u.active).ToList();
         }
 
-        private bool shouldActive(User u)
+        public List<User> OutSchedule()
         {
-            return u.disabled == true && DateTime.Now >= u.activeAt;
+            return ctx.Users.Where(u => !(DateTime.Now >= u.activeStart && DateTime.Now <= u.activeStop) && u.active).ToList();
         }
     }
 }

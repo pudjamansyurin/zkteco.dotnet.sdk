@@ -66,32 +66,47 @@ namespace WebApiZkteco.Controllers
         }
 
 
-        [HttpPut("user/{sUserID}")]
-        public ActionResult EnableUser(string sUserID)
+        //[HttpPut("user/{sUserID}")]
+        //public ActionResult EnableUser(string sUserID)
+        //{
+        //    try
+        //    {
+        //        var user = _user.Get(sUserID);
+        //        _sdk.SetUser(user);
+        //        _user.Enable(user);
+        //        return Ok("User " + sUserID + " enabled");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Conflict(e.Message);
+        //    }
+        //}
+
+
+        //[HttpDelete("user/{sUserID}")]
+        //public ActionResult DisableUser(string sUserID, [FromForm] DateTime activeAt)
+        //{
+        //    try
+        //    {
+        //        var user = _user.Get(sUserID);
+        //        _sdk.DeleteUser(user);
+        //        _user.Disable(user, activeAt);
+        //        return Ok("User " + sUserID + " finger disabled");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Conflict(e.Message);
+        //    }
+        //}
+
+        [HttpPut("schedule/{sUserID}")]
+        public ActionResult ScheduleUser(string sUserID, [FromForm] DateTime start, [FromForm] DateTime stop)
         {
             try
             {
                 var user = _user.Get(sUserID);
-                _sdk.SetUser(user);
-                _user.Enable(user);
-                return Ok("User " + sUserID + " enabled");
-            }
-            catch (Exception e)
-            {
-                return Conflict(e.Message);
-            }
-        }
-
-
-        [HttpDelete("user/{sUserID}")]
-        public ActionResult DisableUser(string sUserID, [FromForm] DateTime activeAt)
-        {
-            try
-            {
-                var user = _user.Get(sUserID);
-                _sdk.DeleteUser(user);
-                _user.Disable(user, activeAt);
-                return Ok("User " + sUserID + " finger disabled");
+                _user.Schedule(user, start, stop);
+                return Ok("User " + sUserID + " scheduled at " + start + " = " + stop);
             }
             catch (Exception e)
             {

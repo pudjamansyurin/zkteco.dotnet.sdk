@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiZkteco.Models;
 
 namespace WebApiZkteco.Migrations
 {
     [DbContext(typeof(ZkContext))]
-    partial class ZkContextModelSnapshot : ModelSnapshot
+    [Migration("20210809140009_AddUserScheduler")]
+    partial class AddUserScheduler
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,13 +26,16 @@ namespace WebApiZkteco.Migrations
                     b.Property<string>("sUserID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("activeAt")
+                    b.Property<bool>("active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("activeStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("activeStop")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("bEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("disabled")
                         .HasColumnType("bit");
 
                     b.Property<int>("iFaceIndex")

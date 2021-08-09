@@ -256,10 +256,13 @@ namespace WebApiZkteco.Services
             if (axCZKEM1.SSR_SetUserInfo(iMachineNumber, user.sUserID, user.sName, user.sPassword, user.iPrivilege, user.bEnabled))//upload user information to the device
             {
                 // upload finger
-                if (user.iFingerLen > 0 && user.sFingerData != null)
+                if (user.idwFingerIndex > 0)
                 {
-                    if (axCZKEM1.SetUserTmpExStr(iMachineNumber, user.sUserID, user.idwFingerIndex, user.iFingerFlag, user.sFingerData))//upload templates information to the device
-                        _logger.LogInformation("Successfully upload fingerprint template");
+                    if (user.iFingerLen > 0 && user.sFingerData != null)
+                    {
+                        if (axCZKEM1.SetUserTmpExStr(iMachineNumber, user.sUserID, user.idwFingerIndex, user.iFingerFlag, user.sFingerData))//upload templates information to the device
+                            _logger.LogInformation("Successfully upload fingerprint template");
+                    }
                 }
                 // upload face
                 // if (user.iFaceLen > 0 && user.sFaceData != null)
