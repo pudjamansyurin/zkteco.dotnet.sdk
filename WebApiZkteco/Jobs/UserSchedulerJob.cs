@@ -35,10 +35,11 @@ namespace WebApiZkteco.Jobs
                 IUserService _user = scope.ServiceProvider.GetRequiredService<IUserService>();
                 ISdkService _sdk = scope.ServiceProvider.GetRequiredService<ISdkService>();
 
-                var _on = checkOnScheduleUsers(_sdk, _user);
-                var _out = checkOutScheduleUsers(_sdk, _user);
+                var shouldActive = checkSouldActiveUsers(_sdk, _user);
+                var shouldDeactive = checkSouldDeactiveUsers(_sdk, _user);
+                var active = _user.Active().Count;
 
-                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} UserScheduler: " + _on + " in, " + _out + " out.");
+                _logger.LogInformation($"{DateTime.Now:hh:mm:ss} UserScheduler: +" + shouldActive + ", -" + shouldDeactive + ", " + active + " active.");
             }
             return Task.CompletedTask;
         }
@@ -49,9 +50,9 @@ namespace WebApiZkteco.Jobs
             return base.StopAsync(cancellationToken);
         }
 
-        private int checkOnScheduleUsers(ISdkService _sdk, IUserService _user)
+        private int checkSouldActiveUsers(ISdkService _sdk, IUserService _user)
         {
-            var users = _user.OnSchedule();
+            var users = _user.ShouldActive();
 
             if (users.Count > 0)
             {
@@ -76,9 +77,9 @@ namespace WebApiZkteco.Jobs
             return users.Count;
         }
 
-        private int checkOutScheduleUsers(ISdkService _sdk, IUserService _user)
+        private int checkSouldDeactiveUsers(ISdkService _sdk, IUserService _user)
         {
-            var users = _user.OutSchedule();
+            var users = _user.ShouldDeactive();
 
             if (users.Count > 0)
             {

@@ -17,8 +17,9 @@ namespace WebApiZkteco.Services
         void Delete(User user);
         void SetActive(User user, bool enable);
         void Schedule(User user, DateTime start, DateTime stop);
-        List<User> OnSchedule();
-        List<User> OutSchedule();
+        List<User> Active();
+        List<User> ShouldActive();
+        List<User> ShouldDeactive();
     }
 
     public class UserService : IUserService
@@ -127,12 +128,17 @@ namespace WebApiZkteco.Services
             ctx.SaveChanges();
         }
 
-        public List<User> OnSchedule()
+        public List<User> Active()
+        {
+            return ctx.Users.Where(u => (DateTime.Now >= u.activeStart && DateTime.Now <= u.activeStop) && u.active).ToList();
+        }
+
+        public List<User> ShouldActive()
         {
             return ctx.Users.Where(u => (DateTime.Now >= u.activeStart && DateTime.Now <= u.activeStop) && !u.active).ToList();
         }
 
-        public List<User> OutSchedule()
+        public List<User> ShouldDeactive()
         {
             return ctx.Users.Where(u => !(DateTime.Now >= u.activeStart && DateTime.Now <= u.activeStop) && u.active).ToList();
         }

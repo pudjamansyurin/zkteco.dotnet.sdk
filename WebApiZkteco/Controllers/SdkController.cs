@@ -99,19 +99,5 @@ namespace WebApiZkteco.Controllers
         //    }
         //}
 
-        [HttpPut("schedule/{sUserID}")]
-        public ActionResult ScheduleUser(string sUserID, [FromForm] DateTime start, [FromForm] DateTime stop)
-        {
-            try
-            {
-                var user = _user.Get(sUserID);
-                _user.Schedule(user, start, stop);
-                return Ok("User " + sUserID + " scheduled at " + start + " = " + stop);
-            }
-            catch (Exception e)
-            {
-                return Conflict(e.Message);
-            }
-        }
     }
 }

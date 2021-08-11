@@ -1,20 +1,22 @@
 import axios from "axios";
 // import { getCSRFToken } from "components/utils";
 
-const api = axios.create({
+const http = axios.create({
   baseURL: "http://localhost:5000/api/",
   //   timeout: 1000,
   headers: {
     // "X-CSRF-Token": getCSRFToken(),
+    "content-type": "application/json",
+    // "content-type": "application/x-www-form-urlencoded",
   },
 });
 
-api.interceptors.request.use((req) => {
+http.interceptors.request.use((req) => {
   console.log(`${req.method} ${req.url}`);
   return req;
 });
 
-api.interceptors.response.use(
+http.interceptors.response.use(
   (res) => {
     console.log(res.data);
     return res.data;
@@ -26,4 +28,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default http;
