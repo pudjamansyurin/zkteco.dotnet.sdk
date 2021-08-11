@@ -42,8 +42,7 @@ namespace WebApiZkteco
             services.AddCronJob<UserSchedulerJob>(c =>
             {
                 c.TimeZoneInfo = TimeZoneInfo.Local;
-                //c.CronExpression = @"* * * * *";
-                c.CronExpression = @"0/20 0/1 * 1/1 * ? *";
+                c.CronExpression = @"* * * * * *";
             });
 
             // In production, the React files will be served from this directory

@@ -34,7 +34,7 @@ export const UserPage = () => {
         .then((data) => setUsers(data))
         .catch((err) => console.error(err))
         .finally(() => setLoading(false));
-    }, 20 * 1000);
+    }, 3 * 1000);
 
     return () => {
       clearInterval(interval);
